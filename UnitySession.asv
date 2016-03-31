@@ -166,23 +166,22 @@ classdef UnitySession
                 line = fgetl(fileID);
             end
             
-            % Upsample to 1000 Hz. This must be done ONLY After
-            % derivatives, etc. have been calculated.
-            for trl = 1:length(S.tme);
+            % Upsample to 1000 Hz.
+            for trl = 1%:length(S.tme);
                 tme_down = S.tme{trl}-S.tme{trl}(1)+1;% First point is now 1
-                tme_up = tme_down(1):tme_down(end);
-                %duplicates = [diff(S.tme{trl})==0];% An alternate way that
-                %isnt working
-                posdat_up = zeros(2,length(tme_up));
-                dirdat_up = zeros(size(tme_up));
-                %dirdat_up = pchip(S.tme{trl}(~duplicates),S.dirdat{trl}(~duplicates),tme_up);
-                for t = 1:length(tme_down)-1;
-                    minit = tme_down(t):tme_down(t+1);
-                    dirdat_up(minit) = S.dirdat{trl}(t); 
-                    posdat_up(1,minit) = S.posdat{trl}(1,t);
-                    posdat_up(2,minit) = S.posdat{trl}(2,t);
-                end
+                tme_up = [tme_down(1):tme_down(end)];
+                duplicates = [diff(S.tme{trl})~=0];
+                %posdat_up = zeros(2,length(tme_up));
+                %dirdat_up = zeros(size(tme_up));
+                dirdat_up = pchip(S.tme{trl}
+%                 for t = 1:length(tme_down)-1;
+%                     minit = tme_down(t):tme_down(t+1);
+%                     dirdat_up(minit) = %interp1([tme_down(t),tme_down(t+1)],[S.dirdat(t),S.dirdat(t+1)],[tme_down(t):tme_down(t+1)]);%S.dirdat{trl}(t); 
+%                     posdat_up(1,minit) = %S.posdat{trl}(1,t);
+%                     posdat_up(2,minit) = %S.posdat{trl}(2,t);
+%                 end
             end
+
         end  
     end
     
