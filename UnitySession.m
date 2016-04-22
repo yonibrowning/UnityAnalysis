@@ -17,6 +17,7 @@ classdef UnitySession
         banpos = []; % Banana locations
         baneat = []; % Banana eat times.
         pulse = []; % Pulse Timing
+        beeplenth =  200;
         % Eye Data
         eyepos = []; % Eye position.
         % Neural Data
@@ -86,9 +87,11 @@ classdef UnitySession
                         S.dirdat{trl} = [];
                         S.beep{trl} = [];
                         S.frm{trl} = [];
+                        S.pulse{trl} = [];
                         newtrl = 0;
                     end
                     if trl>=1;
+                        beepOn = false;
                         % if entry is position. Here, we can log frame and
                         % time. B.C. the next entry will always be rotation,
                         % these will NOT be loged. This is the same for all
@@ -106,10 +109,24 @@ classdef UnitySession
                             S.dirdat{trl} = [S.dirdat{trl} str2double(elmts{6})];
                             % Entries for beeps
                         elseif isequal(elmts{3},'BEEP');
-                            S.beep{trl} = [S.beep{trl}; str2double(elmts{1}), str2double(elmts{2})];
+                            S.beep{trl} = [S.beep{trl}; str2double(elmts{1}), str2double(elmts{2}), 1];
+                            S.pulse{trl} = [S.pulse{trl}; str2double(elmts{1}), 1];
+                            beepOn = true;
+                            beeptme = elmts{1};
                             % Entires for bananas being created or distroyed.
                         elseif isequal(elmts{3},'Pulse');
-                            S.pulse{trl} = [S.pulse{trl}; str2double(elmts{1}), 1];
+                            if isequal(elmts{4},'Start');
+                                S.pulse{trl} = [S.pulse{trl}; str2double(elmts{1}), 1];
+                            elseif isequal(elmts{4},'End');
+                                S.pulse{trl} = [S.pulse{trl}; str2double(elmts{1}), 1];
+                            end
+                        end
+                        
+                        % End pulses sent durring reward. 
+                        if beepOn && (elmts{1})>(beeptme+beeplength);
+                            beepOn = false;
+                            S.beep{trl} = [S.beep{trl}; str2double(elmts{1}), str2double(elmts{2}), 0];
+                            S.pulse{trl} = [S.pulse{trl}; str2double(elmts{1}), 0];
                         end
                         
                         % Note Banana Locations, eat times for the Foraging Task; 
