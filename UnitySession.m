@@ -1,5 +1,7 @@
 classdef UnitySession
-    %This is my way of loading a unity
+    %This is my way of loading a unity behavior file and pairing it with
+    %neural data
+    
     
     properties
         % File names used to build the object. Just for reference later.
